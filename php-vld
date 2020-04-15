@@ -1,0 +1,17 @@
+#!/bin/sh
+
+base_path=$(dirname $0)
+script_path=$(dirname $(realpath $1))
+script_name=$(basename $1)
+
+if [[ "$(docker images -q gustavonovaes/php-vld 2> /dev/null)" == "" ]]; then
+  docker build -t gustavonovaes/php-vld $base_path
+fi
+
+docker run \
+  --rm \
+  -it \
+  -w /src \
+  -v $script_path:/src \
+  gustavonovaes/php-vld \
+  php -dvld.active=1 -dvld.execute=0 $script_name
